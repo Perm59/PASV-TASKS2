@@ -78,5 +78,4 @@ describe('TEST AMAZON PAGE', () => {
     const productInCartTitle = browser.$('//span[@class="a-size-medium sc-product-title"]').getText();
     expect((productInCartTitle.toLowerCase()).includes(productInListTitle.toLowerCase())).true;
   });
-
 });
