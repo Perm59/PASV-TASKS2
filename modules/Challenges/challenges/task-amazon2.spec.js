@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-describe('', () => {
+describe('TEST AMAZON PAGE', () => {
   before('go to amazom.com', () => {
     browser.url('https://www.amazon.com/');
   });
@@ -8,7 +8,7 @@ describe('', () => {
   it('should login', () =>{
     browser.$('//a[@id="nav-link-accountList"]').click();
     browser.pause(500);
-    browser.$('//input[@id="ap_email"]').setValue('test@test.com');
+    browser.$('//input[@id="ap_email"]').setValue('testtest@test.com');
     browser.$('//input[@id="continue"]').click();
     browser.pause(500);
     browser.$('//input[@id="ap_password"]').setValue('testtest');
@@ -24,7 +24,7 @@ describe('', () => {
   });
 
   it('should sort by department', () =>{
-    $('//select[@id="searchDropdownBox"]').selectByVisibleText('Clothing, Shoes & Jewelry');
+    browser.$('//select[@id="searchDropdownBox"]').selectByVisibleText('Clothing, Shoes & Jewelry');
     browser.pause(1000);
   });
 
@@ -36,8 +36,9 @@ describe('', () => {
 
   let max = 0;
   let maxDiscountProduct;
+  let productInListTitle;
 
-  it('should add the product with the highest discount % on the first page to bag', () =>{
+  it('should add the product with the highest discount % on the first page to the  bag', () =>{
     const products = $$('//div[@data-index]');
     const count = products.length;
     for (let i = 0; i < count; i++) {
@@ -53,15 +54,21 @@ describe('', () => {
     }
     maxDiscountProduct.click();
     browser.pause(500);
-    const productInListTitle = browser.$('//span[@id="productTitle"]').getText();
+    productInListTitle = browser.$('//span[@id="productTitle"]').getText();
     if ((browser.$('//select[@id="native_dropdown_selected_size_name"]')).isExisting()) {
-      browser.$('//select[@id="native_dropdown_selected_size_name"]').selectByIndex(0);
+      browser.$('//select[@id="native_dropdown_selected_size_name"]').selectByIndex(1);
     }
     browser.$('//input[@id="add-to-cart-button"]').click();
-    browser.pause(500);
+    browser.pause(1000);
+  });
+
+  it('should check that the correct item has been added to the cart', () =>{
     browser.$('//a[@id="nav-cart"]').click();
     browser.refresh();
     const productInCartTitle = browser.$('//span[@class="a-size-medium sc-product-title"]').getText();
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx ' + productInListTitle)
+    console.log('zzzzzzzzzzzzzzzzzzzzzzzz ' + productInCartTitle)
     expect(productInCartTitle.includes(productInListTitle)).true;
   });
+
 });
