@@ -8,7 +8,7 @@ describe('', () => {
   it('should login', () =>{
     browser.$('//a[@id="nav-link-accountList"]').click();
     browser.pause(500);
-    browser.$('//input[@id="ap_email"]').setValue('testtest@test.com');
+    browser.$('//input[@id="ap_email"]').setValue('test@test.com');
     browser.$('//input[@id="continue"]').click();
     browser.pause(500);
     browser.$('//input[@id="ap_password"]').setValue('testtest');
@@ -44,9 +44,9 @@ describe('', () => {
       if ($(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`).isExisting()) {
         const originalPrice = $(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`).getText().slice(1);
         const discountPrice = $(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price"]`).getText().replace(/\s/g, '.').slice(1);
-        const difference = (+originalPrice - +discountPrice).toFixed(2);
-        if (+difference > max){
-          max = +difference;
+        const discountPercent = (+originalPrice / +discountPrice).toFixed(2);
+        if (+discountPercent > max){
+          max = +discountPercent;
           maxDiscountProduct = $(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`);
         }
       }
@@ -54,7 +54,9 @@ describe('', () => {
     maxDiscountProduct.click();
     browser.pause(500);
     const productInListTitle = browser.$('//span[@id="productTitle"]').getText();
-    browser.$('//select[@id="native_dropdown_selected_size_name"]').selectByVisibleText("8");
+    if ((browser.$('//select[@id="native_dropdown_selected_size_name"]')).isExisting()) {
+      browser.$('//select[@id="native_dropdown_selected_size_name"]').selectByIndex(0);
+    }
     browser.$('//input[@id="add-to-cart-button"]').click();
     browser.pause(500);
     browser.$('//a[@id="nav-cart"]').click();
