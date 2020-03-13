@@ -8,10 +8,10 @@ describe('TEST AMAZON PAGE', () => {
   it('should login', () =>{
     browser.$('//a[@id="nav-link-accountList"]').click();
     browser.pause(500);
-    browser.$('//input[@id="ap_email"]').setValue('test@test.com');
+    browser.$('//input[@id="ap_email"]').setValue('anna_aleksejeva@hotmail.com');
     browser.$('//input[@id="continue"]').click();
     browser.pause(500);
-    browser.$('//input[@id="ap_password"]').setValue('testtest');
+    browser.$('//input[@id="ap_password"]').setValue('Koorti30Princeton5!');
     browser.$('//input[@id="signInSubmit"]').click();
     browser.pause(500);
   });
@@ -31,25 +31,43 @@ describe('TEST AMAZON PAGE', () => {
   let max = 0;
   let maxDiscountProduct;
   let productInListTitle;
+  let pageNumber;
 
-  it('should add the product with the highest discount % on the first page to the  bag', () =>{
-    const products = $$('//div[@data-index]');
-    const count = products.length;
+  it('should add the product with the highest discount % to the  bag', () =>{
     /* the below loop takes all products on the page one by one and checks if there is the discounted price, if yes,
     it takes two prices (original and discounted) and calculates the percentage of discount, then it finds
     the product with the highest discount percentage on a page
     */
-    for (let i = 0; i < count; i++) {
-      if ($(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`).isExisting()) {
-        const originalPrice = $(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`).getText().slice(1);
-        const discountPrice = $(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price"]`).getText().replace(/\s/g, '.').slice(1);
-        const discountPercent = (+originalPrice / +discountPrice).toFixed(2);
-        if (+discountPercent > max){
-          max = +discountPercent;
-          maxDiscountProduct = $(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`);
+    for (let i = 1; i <= 3; i++) {
+      const products = $$('//div[@data-index]');
+      const count = products.length;
+      browser.$('//ul[@class="a-pagination"]').scrollIntoView();
+      browser.pause(2000);
+      if (i > 1) {
+        browser.$('//ul[@class="a-pagination"]//a[text() = "Next"]').click();
+        browser.pause(2000);}
+      for (let j = 0; j < count; j++) {
+        if ($(`(${'//div[@data-index]'})[${j}]//span[@class = "a-price a-text-price"]`).isExisting()) {
+          const originalPrice = $(`(${'//div[@data-index]'})[${j}]//span[@class = "a-price a-text-price"]`).getText().slice(1);
+          const discountPrice = $(`(${'//div[@data-index]'})[${j}]//span[@class = "a-price"]`).getText().replace(/\s/g, '.').slice(1);
+          const discountPercent = (+originalPrice / +discountPrice).toFixed(2);
+          if (+discountPercent > max) {
+            max = +discountPercent;
+            maxDiscountProduct = $(`(${'//div[@data-index]'})[${j}]//span[@class = "a-price a-text-price"]`);
+            pageNumber = i;
+          }
         }
       }
     }
+    browser.pause(1000);
+    browser.$('//ul[@class="a-pagination"]').scrollIntoView();
+    browser.pause(1000);
+    browser.$('//ul[@class="a-pagination"]//a[text() = "1"]').click();
+    for (let i = 1; i < pageNumber; i++){
+      browser.$('//ul[@class="a-pagination"]//a[text() = "Next"]').click();
+      browser.pause(500);
+    }
+    browser.pause(1000);
     maxDiscountProduct.click();
     browser.pause(500);
     productInListTitle = browser.$('//span[@id="productTitle"]').getText();
@@ -78,5 +96,4 @@ describe('TEST AMAZON PAGE', () => {
     const productInCartTitle = browser.$('//span[@class="a-size-medium sc-product-title"]').getText();
     expect((productInCartTitle.toLowerCase()).includes(productInListTitle.toLowerCase())).true;
   });
-
 });
