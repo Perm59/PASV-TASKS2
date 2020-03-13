@@ -37,7 +37,7 @@ describe('', () => {
   let max = 0;
   let maxDiscountProduct;
 
-  it('should add the product with the highest discount on the first page to bag', () =>{
+  it('should add the product with the highest discount % on the first page to bag', () =>{
     const products = $$('//div[@data-index]');
     const count = products.length;
     for (let i = 0; i < count; i++) {
