@@ -8,7 +8,7 @@ describe('TEST AMAZON PAGE', () => {
   it('should login', () =>{
     browser.$('//a[@id="nav-link-accountList"]').click();
     browser.pause(500);
-    browser.$('//input[@id="ap_email"]').setValue('testtest@test.com');
+    browser.$('//input[@id="ap_email"]').setValue('test@test.com');
     browser.$('//input[@id="continue"]').click();
     browser.pause(500);
     browser.$('//input[@id="ap_password"]').setValue('testtest');
@@ -28,12 +28,6 @@ describe('TEST AMAZON PAGE', () => {
     browser.pause(1000);
   });
 
-  // it('should sort by price', () =>{
-  //   let sortDropdown = browser.$('//select[@id="s-result-sort-select"]');
-  //   sortDropdown.selectByVisibleText("Price: Low to High");
-  //   browser.pause(3000);
-  // });
-
   let max = 0;
   let maxDiscountProduct;
   let productInListTitle;
@@ -41,6 +35,10 @@ describe('TEST AMAZON PAGE', () => {
   it('should add the product with the highest discount % on the first page to the  bag', () =>{
     const products = $$('//div[@data-index]');
     const count = products.length;
+    /* the below loop takes all products on the page one by one and checks if there is the discounted price, if yes,
+    it takes two prices (original and discounted) and calculates the percentage of discount, then it finds
+    the product with the highest discount percentage on a page
+    */
     for (let i = 0; i < count; i++) {
       if ($(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`).isExisting()) {
         const originalPrice = $(`(${'//div[@data-index]'})[${i}]//span[@class = "a-price a-text-price"]`).getText().slice(1);
@@ -55,20 +53,30 @@ describe('TEST AMAZON PAGE', () => {
     maxDiscountProduct.click();
     browser.pause(500);
     productInListTitle = browser.$('//span[@id="productTitle"]').getText();
+    /* There are several options on amazon product page that affect the scenarios the product is added to the cart:
+     - sometimes there is `size` selection on a product page, sometimes not - thus the first `if` is added below;
+     - sometimes selected size is unavailable, so `Add to cart` button does not show - thus the second `if` is added and
+     a loop that keeps selecting other size until one becomes available and `Add to cart`button appears.
+     */
     if ((browser.$('//select[@id="native_dropdown_selected_size_name"]')).isExisting()) {
-      browser.$('//select[@id="native_dropdown_selected_size_name"]').selectByIndex(1);
-    }
-    browser.$('//input[@id="add-to-cart-button"]').click();
-    browser.pause(1000);
+      for (let i = 1; i < 10; i++) {
+        browser.$('//select[@id="native_dropdown_selected_size_name"]').selectByIndex(i);
+        if ((browser.$('//input[@id="add-to-cart-button"]')).isExisting()) {
+          browser.$('//input[@id="add-to-cart-button"]').click();
+          browser.pause(600); break;
+        }
+      }
+    } else {
+        browser.$('//input[@id="add-to-cart-button"]').click();
+        browser.pause(600);
+      }
   });
 
   it('should check that the correct item has been added to the cart', () =>{
     browser.$('//a[@id="nav-cart"]').click();
     browser.refresh();
     const productInCartTitle = browser.$('//span[@class="a-size-medium sc-product-title"]').getText();
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx ' + productInListTitle)
-    console.log('zzzzzzzzzzzzzzzzzzzzzzzz ' + productInCartTitle)
-    expect(productInCartTitle.includes(productInListTitle)).true;
+    expect((productInCartTitle.toLowerCase()).includes(productInListTitle.toLowerCase())).true;
   });
 
 });
