@@ -15,10 +15,10 @@ describe('', () => {
   it('should login', () =>{
     browser.$('//a[@id="nav-link-accountList"]').click();
     browser.pause(500);
-    browser.$('//input[@id="ap_email"]').setValue('anna_aleksejeva@hotmail.com');
+    browser.$('//input[@id="ap_email"]').setValue('test@test.com');
     browser.$('//input[@id="continue"]').click();
     browser.pause(500);
-    browser.$('//input[@id="ap_password"]').setValue('KsjushaFedja2');
+    browser.$('//input[@id="ap_password"]').setValue('testtest');
     browser.$('//input[@id="signInSubmit"]').click();
     browser.pause(500);
   });
